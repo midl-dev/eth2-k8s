@@ -118,6 +118,7 @@ spec:
         resources:
           limits:
             cpu: 0
+        imagePullPolicy: Always
   volumeClaimTemplates:
   - metadata:
       name: prysm-validator-pv-claim

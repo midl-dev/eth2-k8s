@@ -1,4 +1,5 @@
 FROM gcr.io/prysmaticlabs/prysm/beacon-chain:((prysm_version)) AS prysm-orig
 FROM debian
 COPY --from=prysm-orig /app/beacon-chain/beacon-chain /app/beacon-chain/beacon-chain
-ENTRYPOINT "/app/beacon-chain/beacon-chain"
+COPY entrypoint.sh /app
+ENTRYPOINT "/app/entrypoint.sh"
