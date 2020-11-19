@@ -2,38 +2,6 @@ terraform {
   required_version = ">= 0.12"
 }
 
-variable "chain" {
-  type = string
-  description = "The chain (can be polkadot, kusama)"
-  default = "polkadot"
-}
-
-variable "polkadot_archive_url" {
-  type        = string
-  description = "archive url"
-}
-
-variable "polkadot_telemetry_url" {
-  type        = string
-  description = "url of the telemetry server the polkadot nodes report to"
-}
-
-variable "polkadot_validator_name" {
-  type        = string
-  description = "name of the validator shown on the public telemetry server"
-}
-
-variable "polkadot_node_keys" {
-  type = map
-  description = "map between hostname of polkadot nodes and their node keys"
-  default = {}
-}
-
-variable "polkadot_version" {
-  type = string
-  description = "Version of the polkadot containers to use"
-}
-
 variable "project" {
   type        = string
   default     = ""
@@ -49,7 +17,7 @@ variable "org_id" {
 variable "region" {
   type        = string
   description = "GCP Region. Only necessary when creating cluster manually"
-  default = ""
+  default     = "us-central1"
 }
 
 variable "node_locations" {
@@ -67,13 +35,13 @@ variable "billing_account" {
 variable "kubernetes_namespace" {
   type = string
   description = "kubernetes namespace to deploy the resource into"
-  default = "polkadot"
+  default = "eth2"
 }
 
 variable "kubernetes_name_prefix" {
   type = string
-  description = "kubernetes name prefix to prepend to all resources (should be short, like DOT)"
-  default = "dot"
+  description = "kubernetes name prefix to prepend to all resources (should be short, like eth)"
+  default = "eth"
 }
 
 variable "kubernetes_endpoint" {
@@ -116,4 +84,15 @@ variable "kubernetes_pool_name" {
   type = string
   description = "when kubernetes cluster has several node pools, specify which ones to deploy the baking setup into. only effective when deploying on an external cluster with terraform_no_cluster_create"
   default = "blockchain-pool"
+}
+
+variable "prysm_version" {
+  type = string
+  description = "prysm container version"
+  default = "v1.0.0-beta.3"
+}
+
+variable "eth1_url" {
+  type = string
+  description = "URL for the ethereum 1 rpc endpoint"
 }

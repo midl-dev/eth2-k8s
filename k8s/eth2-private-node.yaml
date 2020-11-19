@@ -45,7 +45,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: polkadot-private-node-policy
+  name: eth2-private-node-policy
   namespace: default
 spec:
   podSelector:
@@ -111,23 +111,13 @@ spec:
           name: dot-p2p-port
         volumeMounts:
         - name: prysm-validator-pv-claim
-          mountPath: /polkadot
+          mountPath: /eth2
         envFrom:
         - configMapRef:
-            name: polkadot-configmap
+            name: eth2-configmap
         resources:
           limits:
             cpu: 0
-      volumes:
-      - name: polkadot-node-keys
-        secret:
-          secretName: polkadot-node-keys
-      initContainers:
-      - name: polkadot-archive-downloader
-        image: polkadot-archive-downloader
-        volumeMounts:
-        - name: prysm-validator-pv-claim
-          mountPath: /polkadot
   volumeClaimTemplates:
   - metadata:
       name: prysm-validator-pv-claim

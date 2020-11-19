@@ -17,7 +17,7 @@ find ${path.module}/../docker -mindepth 1 -maxdepth 1 -type d  -printf '%f\n'| w
   
   pushd ${path.module}/../docker/$container
   cp Dockerfile.template Dockerfile
-  sed -i "s/((polkadot_version))/${var.polkadot_version}/" Dockerfile
+  sed -i "s/((prysm_version))/${var.prysm_version}/" Dockerfile
   cat << EOY > cloudbuild.yaml
 steps:
 - name: 'gcr.io/cloud-builders/docker'
@@ -33,20 +33,7 @@ EOF
   }
 }
 
-# generate node keys if they are not passed as parameters
-# conventiently, ed25519 is happy with random bytes as private key
-# unfortunately, terraform does not support generation of sensitive hex data, so we have
-# to hack the "random_password" resource to generate a hex
-resource "random_password" "private-node-0-key" {
-  count = contains(keys(var.polkadot_node_keys), "polkadot-private-node-0") ? 0 : 1
-  length = 64
-  override_special = "abcdef1234567890"
-  upper = false
-  lower = false
-  number = false
-}
-
-resource "kubernetes_namespace" "polkadot_namespace" {
+resource "kubernetes_namespace" "eth2_namespace" {
   metadata {
     name = var.kubernetes_namespace
   }
@@ -64,7 +51,7 @@ resource "kubernetes_storage_class" "local-ssd" {
   parameters = {
     type = "pd-ssd"
   }
-  depends_on = [ kubernetes_namespace.polkadot_namespace ]
+  depends_on = [ kubernetes_namespace.eth2_namespace ]
 }
 
 # FIXME this is a bug in kustomize where it will not prepend characters to the storageClass requirement
@@ -80,17 +67,7 @@ resource "kubernetes_storage_class" "repd-europe-west1-b-d" {
     replication-type = "regional-pd"
     zones = "europe-west1-b, europe-west1-d"
   }
-  depends_on = [ kubernetes_namespace.polkadot_namespace ]
-}
-
-resource "kubernetes_secret" "polkadot_node_keys" {
-  metadata {
-    name = "polkadot-node-keys"
-    namespace = var.kubernetes_namespace
-  }
-  data = {
-    "${var.kubernetes_name_prefix}-private-node-0" : lookup(var.polkadot_node_keys, "polkadot-private-node-0", length(random_password.private-node-0-key) == 1 ? random_password.private-node-0-key[0].result : "") }
-  depends_on = [ kubernetes_namespace.polkadot_namespace ]
+  depends_on = [ kubernetes_namespace.eth2_namespace ]
 }
 
 resource "null_resource" "apply" {
@@ -108,10 +85,7 @@ pushd ${path.module}/k8s-${var.kubernetes_namespace}
 cat <<EOK > kustomization.yaml
 ${templatefile("${path.module}/../k8s/kustomization.yaml.tmpl",
      { "project" : module.terraform-gke-blockchain.project,
-       "polkadot_archive_url": var.polkadot_archive_url,
-       "polkadot_telemetry_url": var.polkadot_telemetry_url,
-       "polkadot_validator_name": var.polkadot_validator_name,
-       "chain": var.chain,
+       "eth1_url": var.eth1_url,
        "kubernetes_namespace": var.kubernetes_namespace,
        "kubernetes_name_prefix": var.kubernetes_name_prefix})}
 EOK
@@ -133,5 +107,5 @@ rm -rvf ${path.module}/k8s-${var.kubernetes_namespace}
 EOF
 
   }
-  depends_on = [ null_resource.push_containers, kubernetes_namespace.polkadot_namespace ]
+  depends_on = [ null_resource.push_containers, kubernetes_namespace.eth2_namespace ]
 }
