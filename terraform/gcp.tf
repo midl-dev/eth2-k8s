@@ -6,6 +6,7 @@ module "terraform-gke-blockchain" {
   project = var.project
   project_prefix = "eth2"
   region = var.region
+  vpc_native = false
   node_locations = var.node_locations
   monitoring_slack_url = var.monitoring_slack_url
 }

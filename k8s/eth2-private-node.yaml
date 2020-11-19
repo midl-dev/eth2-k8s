@@ -85,7 +85,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: private-node
+  name: eth2-private-node
 spec:
   selector:
     matchLabels:
@@ -101,7 +101,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: prysm-beaon-chain
-        image: gcr.io/prysmaticlabs/prysm/beacon-chain:stable
+        image: prysm-sh
         ports:
         - containerPort: 9933
           name: dot-rpc-port

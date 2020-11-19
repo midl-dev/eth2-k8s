@@ -12,17 +12,11 @@ namespace: ${kubernetes_namespace}
 # "wordpress" becomes "alices-wordpress".
 namePrefix: ${kubernetes_name_prefix}-
 
-#imageTags:
-#  - name: polkadot-private-node
-#    newName: gcr.io/${project}/polkadot-private-node
-#    newTag: latest
-#  - name: polkadot-archive-downloader
-#    newName: gcr.io/${project}/polkadot-archive-downloader
-#    newTag: latest
-#  - name: polkadot-node-key-configurator
-#    newName: gcr.io/${project}/polkadot-node-key-configurator
-#    newTag: latest
-#
+imageTags:
+  - name: prysm-sh
+    newName: gcr.io/${project}/prysm-sh
+    newTag: ${kubernetes_namespace}-latest
+
 configMapGenerator:
 - name: polkadot-configmap
   literals:
