@@ -1,0 +1,4 @@
+FROM gcr.io/prysmaticlabs/prysm/beacon-chain:HEAD-15706a AS prysm-orig
+FROM debian
+COPY --from=prysm-orig /app/beacon-chain/image.binary /app/beacon-chain/image.binary
+ENTRYPOINT "/app/beacon-chain/image.binary"

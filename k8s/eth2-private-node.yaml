@@ -1,0 +1,133 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+    name: regional
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+  replication-type: regional-pd
+allowVolumeExpansion: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: private-node
+  labels:
+    app: private-node
+spec:
+  ports:
+  - port: 9933
+    name: rpc
+  - port: 9615
+    name: metrics
+  - port: 30333
+    name: p2p
+  selector:
+    app: private-node
+  clusterIP: None
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: private-node
+    release: monitoring
+  name: private-monitoring
+spec:
+  endpoints:
+  - interval: 15s
+    port: metrics
+    path: /metrics
+  selector:
+    matchLabels:
+      app: private-node
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: polkadot-private-node-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: private-node
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    - port: 443
+      protocol: TCP
+    - port: 30333
+      protocol: TCP
+    - port: 30334
+      protocol: TCP
+    - port: 30100
+      protocol: TCP
+  ingress:
+  - ports:
+    - port: 30333
+      protocol: TCP
+  - ports:
+    - port: 9615
+      protocol: TCP
+    from:
+    - namespaceSelector:
+        matchLabels: {}
+      podSelector:
+        matchLabels:
+          app: prometheus
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: private-node
+spec:
+  selector:
+    matchLabels:
+      app: private-node
+  serviceName: private-node
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: private-node
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: prysm-beaon-chain
+        image: gcr.io/prysmaticlabs/prysm/beacon-chain:stable
+        ports:
+        - containerPort: 9933
+          name: dot-rpc-port
+        - containerPort: 9615
+          name: metrics
+        - containerPort: 30333
+          name: dot-p2p-port
+        volumeMounts:
+        - name: prysm-validator-pv-claim
+          mountPath: /polkadot
+        envFrom:
+        - configMapRef:
+            name: polkadot-configmap
+        resources:
+          limits:
+            cpu: 0
+      volumes:
+      - name: polkadot-node-keys
+        secret:
+          secretName: polkadot-node-keys
+      initContainers:
+      - name: polkadot-archive-downloader
+        image: polkadot-archive-downloader
+        volumeMounts:
+        - name: prysm-validator-pv-claim
+          mountPath: /polkadot
+  volumeClaimTemplates:
+  - metadata:
+      name: prysm-validator-pv-claim
