@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: eth2-private-node
+  name: private-node
 spec:
   volumeClaimTemplates:
   - metadata:
-      name: eth2-private-node-pv-claim
+      name: prysm-validator-pv-claim
     spec:
       storageClassName: ${kubernetes_name_prefix}-regional
       accessModes: [ "ReadWriteOnce" ]
