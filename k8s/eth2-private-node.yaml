@@ -46,7 +46,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: eth2-private-node-policy
-  namespace: default
 spec:
   podSelector:
     matchLabels:
@@ -111,7 +110,7 @@ spec:
           name: dot-p2p-port
         volumeMounts:
         - name: prysm-validator-pv-claim
-          mountPath: /eth2
+          mountPath: /data
         envFrom:
         - configMapRef:
             name: prysm-configmap

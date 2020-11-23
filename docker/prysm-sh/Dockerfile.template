@@ -1,5 +1,6 @@
 FROM gcr.io/prysmaticlabs/prysm/beacon-chain:((prysm_version)) AS prysm-orig
 FROM debian
+RUN apt-get update && apt-get -y install curl
 COPY --from=prysm-orig /app/beacon-chain/beacon-chain /app/beacon-chain/beacon-chain
 COPY entrypoint.sh /app
 ENTRYPOINT "/app/entrypoint.sh"
