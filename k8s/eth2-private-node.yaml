@@ -99,8 +99,8 @@ spec:
       securityContext:
         fsGroup: 1000
       containers:
-      - name: prysm-beaon-chain
-        image: prysm-sh
+      - name: prysm-validator
+        image: prysm-validator-sh
         ports:
         - containerPort: 9933
           name: dot-rpc-port
@@ -118,6 +118,27 @@ spec:
           limits:
             cpu: 0
         imagePullPolicy: Always
+      - name: prysm-beacon-chain
+        image: prysm-sh
+        ports:
+        - containerPort: 4000
+          name: rpc-port
+        - containerPort: 9615
+          name: metrics
+        - containerPort: 30333
+          name: dot-p2p-port
+        volumeMounts:
+        - name: prysm-chain-pv-claim
+          mountPath: /data
+        envFrom:
+        - configMapRef:
+            name: prysm-configmap
+        resources:
+          limits:
+            cpu: 0
+        imagePullPolicy: Always
   volumeClaimTemplates:
   - metadata:
       name: prysm-validator-pv-claim
+  - metadata:
+      name: prysm-chain-pv-claim

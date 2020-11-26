@@ -12,3 +12,11 @@ spec:
       resources:
         requests:
           storage: 10Gi
+  - metadata:
+      name: prysm-chain-pv-claim
+    spec:
+      storageClassName: ${kubernetes_name_prefix}-regional
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi

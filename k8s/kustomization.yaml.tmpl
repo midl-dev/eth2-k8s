@@ -16,6 +16,9 @@ imageTags:
   - name: prysm-sh
     newName: gcr.io/${project}/prysm-sh
     newTag: ${kubernetes_namespace}-latest
+  - name: prysm-validator-sh
+    newName: gcr.io/${project}/prysm-validator-sh
+    newTag: ${kubernetes_namespace}-latest
 
 configMapGenerator:
 - name: prysm-configmap
