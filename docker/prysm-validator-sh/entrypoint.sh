@@ -10,10 +10,10 @@ cat << EOF > /wallet/direct/keymanageropts.json
 }
 EOF
 cat << EOF > /wallet/direct/accounts/all-accounts.keystore.json
-KEYSTORE GOES HERE
+${PRYSM_KEYSTORE}
 EOF
 chmod -R 400 /wallet/direct/accounts/
-echo "Cul123!@#" > /password
+echo "${PRYSM_KEYSTORE_PASSWORD}" > /password
 /app/validator/validator --accept-terms-of-use \
     --beacon-rpc-provider=127.0.0.1:4000 \
     --wallet-dir=/wallet \

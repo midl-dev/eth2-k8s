@@ -96,3 +96,13 @@ variable "eth1_url" {
   type = string
   description = "URL for the ethereum 1 rpc endpoint"
 }
+
+variable "prysm_keystore" {
+  type = string
+  description = "keystore in json format"
+}
+
+variable "prysm_keystore_password" {
+  type = string
+  description = "keystore password"
+}

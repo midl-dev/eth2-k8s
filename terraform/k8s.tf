@@ -40,33 +40,16 @@ resource "kubernetes_namespace" "eth2_namespace" {
   depends_on = [ module.terraform-gke-blockchain ]
 }
 
-# FIXME this is a bug in kustomize where it will not prepend characters to the storageClass requirement
-# to address it, we define it here. At some point, later, it will stop being needed.
-resource "kubernetes_storage_class" "local-ssd" {
-  count = var.kubernetes_name_prefix == "dot" ? 1  : 0
+resource "kubernetes_secret" "validator_keystore" {
   metadata {
-    name = "local-ssd"
+    name = "validator-keystore"
+    namespace = var.kubernetes_namespace
   }
-  storage_provisioner = "kubernetes.io/gce-pd"
-  parameters = {
-    type = "pd-ssd"
+  data = {
+    "PRYSM_KEYSTORE": var.prysm_keystore,
+    "PRYSM_KEYSTORE_PASSWORD": var.prysm_keystore_password
   }
-  depends_on = [ kubernetes_namespace.eth2_namespace ]
-}
 
-# FIXME this is a bug in kustomize where it will not prepend characters to the storageClass requirement
-# to address it, we define it here. At some point, later, it will stop being needed.
-resource "kubernetes_storage_class" "repd-europe-west1-b-d" {
-  count = var.kubernetes_name_prefix == "dot" ? 1  : 0
-  metadata {
-    name = "repd-europe-west1-b-d"
-  }
-  storage_provisioner = "kubernetes.io/gce-pd"
-  parameters = {
-    type = "pd-ssd"
-    replication-type = "regional-pd"
-    zones = "europe-west1-b, europe-west1-d"
-  }
   depends_on = [ kubernetes_namespace.eth2_namespace ]
 }
 
@@ -107,5 +90,5 @@ rm -rvf ${path.module}/k8s-${var.kubernetes_namespace}
 EOF
 
   }
-  depends_on = [ null_resource.push_containers, kubernetes_namespace.eth2_namespace ]
+  depends_on = [ null_resource.push_containers, kubernetes_secret.validator_keystore ]
 }
