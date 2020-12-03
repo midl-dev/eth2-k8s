@@ -14,9 +14,16 @@ ${PRYSM_KEYSTORE}
 EOF
 chmod -R 400 /wallet/direct/accounts/
 echo "${PRYSM_KEYSTORE_PASSWORD}" > /password
-/app/validator/validator --accept-terms-of-use \
+
+if [ "$CHAIN" == "pyrmont" ]; then
+    chain_param="--pyrmont"
+else
+    chain_param="--mainnet"
+fi
+
+eval /app/validator/validator --accept-terms-of-use \
     --beacon-rpc-provider=127.0.0.1:4000 \
     --wallet-dir=/wallet \
     --wallet-password-file=\password \
     --datadir /data \
-    --pyrmont
+    $chain_param

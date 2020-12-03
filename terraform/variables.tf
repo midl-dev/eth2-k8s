@@ -106,3 +106,9 @@ variable "prysm_keystore_password" {
   type = string
   description = "keystore password"
 }
+
+variable "chain" {
+  type = string
+  description = "mainnet or testnet such as pyrmont"
+  default = "mainnet"
+}

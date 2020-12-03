@@ -25,6 +25,7 @@ configMapGenerator:
   literals:
       - ETH1_URL="${eth1_url}"
       - KUBERNETES_NAME_PREFIX="${kubernetes_name_prefix}"
+      - CHAIN="${chain}"
 
 patchesStrategicMerge:
 - prefixedpv.yaml
