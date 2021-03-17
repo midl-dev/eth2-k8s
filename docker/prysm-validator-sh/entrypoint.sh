@@ -21,7 +21,7 @@ else
     chain_param="--mainnet"
 fi
 
-eval /app/validator/validator --accept-terms-of-use \
+eval /app/validator --accept-terms-of-use \
     --beacon-rpc-provider=127.0.0.1:4000 \
     --wallet-dir=/wallet \
     --wallet-password-file=\password \

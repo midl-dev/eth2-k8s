@@ -1,6 +1,6 @@
 FROM gcr.io/prysmaticlabs/prysm/validator:((prysm_version)) AS prysm-orig
 FROM debian
-RUN apt-get update && apt-get -y install curl telnet
-COPY --from=prysm-orig /app/validator/validator /app/validator/validator
+RUN apt-get update && apt-get -y install curl
+COPY --from=prysm-orig /app/cmd/validator/validator.runfiles/prysm/cmd/validator/validator_/validator /app/
 COPY entrypoint.sh /app
 ENTRYPOINT "/app/entrypoint.sh"
