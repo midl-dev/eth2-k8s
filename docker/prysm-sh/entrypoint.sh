@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ "$CHAIN" == "pyrmont" ]; then
-    chain_param="--pyrmont"
+if [ "$CHAIN" == "goerli" ]; then
+    chain_param="--goerli"
 else
     chain_param="--mainnet"
 fi

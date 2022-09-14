@@ -15,8 +15,8 @@ EOF
 chmod -R 400 /wallet/direct/accounts/
 echo "${PRYSM_KEYSTORE_PASSWORD}" > /password
 
-if [ "$CHAIN" == "pyrmont" ]; then
-    chain_param="--pyrmont"
+if [ "$CHAIN" == "goerli" ]; then
+    chain_param="--goerli"
 else
     chain_param="--mainnet"
 fi

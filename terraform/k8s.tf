@@ -1,7 +1,6 @@
 resource "null_resource" "push_containers" {
 
   triggers = {
-    host = md5(module.terraform-gke-blockchain.kubernetes_endpoint)
     cluster_ca_certificate = md5(
       module.terraform-gke-blockchain.cluster_ca_certificate,
     )
